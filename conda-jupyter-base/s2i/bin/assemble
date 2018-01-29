@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -x
+
+set -eo pipefail
+
+# TODO prob need to clean up these export PATH statements up with a config file or something
+export PATH=/opt/anaconda3/bin:$PATH
+
+# This only supports install conda packages from arbitary channels. No pip support at this time
+cd /tmp/src
+
+# install environments so we can do things like support py2 and py3 kernels on the same Jupyter instance
+# assume py3.6 is in the base environment
+while IFS='' read -r line || [[ -n "$line" ]]; do
+    conda create -n $line -q -y 
+done < "environments.txt"
+
+
+# install the packages to an environment from a specified channel
+for file in `ls *-packages-*.txt`; do
+    channel="${file/-packages-*\.txt/}"
+    tmp="${file/.txt/}"
+    environment="${tmp/*-/}"
+    conda install -q -c $channel -n $environment --file $file
+done

@@ -1,0 +1,50 @@
+#!/bin/sh
+
+# TODO support the oshinko spark cluster stuff
+# probably should be disabled by default and then enabled via an DeployConfig ENV VAR
+# https://github.com/radanalyticsio/oshinko-s2i/blob/master/scripts/common/added/utils/start.sh
+
+# TODO prob need to clean up these export PATH statements up with a config file or something
+export PATH=/opt/anaconda3/bin:$PATH
+
+# inspired by https://github.com/openshift/jenkins/blob/master/2/contrib/jenkins/jenkins-common.sh
+# and taken instead of the entrypoint approach used in https://github.com/radanalyticsio/openshift-spark/blob/master/scripts/spark/added/entrypoint
+
+USER_ID=$(id -u)
+GROUP_ID=$(id -g)
+
+# Check if user already exists
+ADD_USER=$(grep $USER_ID /etc/passwd | wc -l)
+
+if [ $ADD_USER -eq 0 ];then
+  echo "User $USER_ID does not exists. Adding the user to /etc/passwd..."
+  if [ x"$USER_ID" != x"0" -a x"$USER_ID" != x"997" ]; then
+    echo "jupyter-user:x:${USER_ID}:${GROUP_ID}:Jupyter User:${HOME}:/sbin/nologin" >> /etc/passwd
+  fi
+else
+  echo "User $USER_ID already exists"
+fi
+
+# Create a profile for the notebook. Add code for setting password for
+# the notebook from an environment variable.
+# TODO maybe do this in Docker build, but since the base image is runnable, it shouldn't be in s2i/assemble
+jupyter notebook --generate-config
+
+cat >> $HOME/.jupyter/jupyter_notebook_config.py << EOF
+import os
+password = os.environ.get('JUPYTER_NOTEBOOK_PASSWORD')
+if password:
+    import notebook.auth
+    c.NotebookApp.password = notebook.auth.passwd(password)
+    del password
+    del os.environ['JUPYTER_NOTEBOOK_PASSWORD']
+EOF
+
+if [[ "$JUPYTERLAB" == true ]]; then
+    # TODO base image doesn't have jupyter lab
+	echo "starting jupyter lab...."
+    exec jupyter lab --port=8888 --no-browser --ip=0.0.0.0
+else
+	echo "startingjupyter notebook...."
+	exec jupyter notebook --port=8888 --no-browser --ip=0.0.0.0
+fi

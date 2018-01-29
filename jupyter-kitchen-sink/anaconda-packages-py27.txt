@@ -1,0 +1,6 @@
+jupyter
+jupyterlab
+networkx
+numpy
+matplotlib
+nb_conda_kernels

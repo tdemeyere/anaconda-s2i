@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cat <<EOF
+This is a prototype S2I Conda image designed for Jupyter, but potentially applicable to other app in Conda.
+EOF

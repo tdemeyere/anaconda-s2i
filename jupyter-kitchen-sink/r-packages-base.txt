@@ -1,0 +1,4 @@
+
+r-irkernel
+r-cairo
+r-base
