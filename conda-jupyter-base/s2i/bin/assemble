@@ -25,7 +25,7 @@ for file in `ls *-packages-*.txt`; do
     channel="${file/-packages-*\.txt/}"
     tmp="${file/.txt/}"
     environment="${tmp/*-/}"
-    conda install -q -c $channel -n $environment --file $file
+    conda install -q -c $channel -n $environment --file $file -y
 done
 
 if [ -f $HOME/.conda/environments.txt ]; then
