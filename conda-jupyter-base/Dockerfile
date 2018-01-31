@@ -18,12 +18,12 @@ RUN INSTALL_PKGS="bzip2" && \
     yum clean all -y
 
 RUN mkdir $ANACONDA_HOME && \
-   
     chmod a+rw /etc/passwd && \
     chown -R 1001:0 $ANACONDA_HOME && \
     chmod -R 1775 $ANACONDA_HOME && \
     chown -R 1001:0 $HOME && \
-    chmod -R 1775 $HOME
+    chmod -R 1775 $HOME &&
+    umask 0002
 
 USER 1001
 
@@ -32,12 +32,7 @@ RUN curl -o installAnacoda.sh $ANACONDA_URI && \
     ./installAnacoda.sh -u -b -p  $ANACONDA_HOME && \
     rm installAnacoda.sh && \
     export PATH="$ANACONDA_HOME/bin:$PATH" && \
-    conda install jupyter -y
-
-# Don't know why this is need, sticky bit should handle
-# seems to be skipping hideen folders...
-RUN chmod -R 777 $ANACONDA_HOME && \
-    chmod -R 777 $HOME
+    conda install jupyter -y \
 
 COPY ./s2i/bin/ $STI_SCRIPTS_PATH
 
