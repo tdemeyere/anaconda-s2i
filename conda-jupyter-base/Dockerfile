@@ -32,7 +32,7 @@ RUN curl -o installAnacoda.sh $ANACONDA_URI && \
     ./installAnacoda.sh -u -b -p  $ANACONDA_HOME && \
     rm installAnacoda.sh && \
     export PATH="$ANACONDA_HOME/bin:$PATH" && \
-    conda install jupyter -y \
+    conda install jupyter -y
 
 COPY ./s2i/bin/ $STI_SCRIPTS_PATH
 
