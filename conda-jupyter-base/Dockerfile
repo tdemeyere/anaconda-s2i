@@ -22,7 +22,7 @@ RUN mkdir $ANACONDA_HOME && \
     chown -R 1001:0 $ANACONDA_HOME && \
     chmod -R 1775 $ANACONDA_HOME && \
     chown -R 1001:0 $HOME && \
-    chmod -R 1775 $HOME &&
+    chmod -R 1775 $HOME && \
     umask 0002
 
 USER 1001
