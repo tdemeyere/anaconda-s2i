@@ -6,7 +6,7 @@ FROM centos/s2i-base-centos7
 
 EXPOSE 8888
 
-ENV ANACONDA_URI=https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+ENV ANACONDA_URI=https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
     ANACONDA_HOME=/opt/anaconda3
 
 USER root
